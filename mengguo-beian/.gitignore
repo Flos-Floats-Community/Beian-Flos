@@ -1,0 +1,6 @@
+/vendor/
+/runtime/
+/.env
+composer.phar
+*.log
+.DS_Store
