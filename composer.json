@@ -1,0 +1,27 @@
+{
+    "name": "float-studio/flos-icp",
+    "description": "浮云社 ICP 备案查询与管理系统",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "ext-pdo_sqlite": "*",
+        "topthink/framework": "^6.1",
+        "topthink/think-orm": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php think service:discover",
+            "@php think vendor:publish"
+        ]
+    }
+}
