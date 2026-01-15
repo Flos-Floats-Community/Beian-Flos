@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>浮云社 ICP备案站点</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; margin: 40px; background: #f9f9f9; }
+        h1 { text-align: center; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f5f5f5; }
+        a { color: #007bff; text-decoration: none; }
+        footer { text-align: center; margin-top: 40px; color: #888; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h1>浮云社 ICP备案站点</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>网站名称</th>
+                <th>域名</th>
+                <th>首页</th>
+                <th>信息</th>
+                <th>浮备案号</th>
+                <th>国家/社区备案</th>
+                <th>归属</th>
+                <th>所有者</th>
+                <th>主体</th>
+                <th>更新</th>
+                <th>状态</th>
+                <th>验证</th>
+                <th>举报</th>
+            </tr>
+        </thead>
+        <tbody>
+            {volist name="records" id="r"}
+            <tr>
+                <td>{$r.site_name}</td>
+                <td>{$r.domain}</td>
+                <td>{if $r.homepage}<a href="{$r.homepage}" target="_blank">访问</a>{else}-{/if}</td>
+                <td>{$r.info|default='-'}</td>
+                <td>{$r.float_icp ?: '（待验证）'}</td>
+                <td>{$r.national_icp ?: '-'}</td>
+                <td>{$r.community ?: '-'}</td>
+                <td>{$r.owner}</td>
+                <td>{$r.entity}</td>
+                <td>{$r.updated_at ?: '-'}</td>
+                <td>✅ 已通过</td>
+                <td>
+                    {if $r.entity_verified == 1}安全
+                    {elseif $r.entity_verified == 2}<span style="color:red;">⚠️高风险</span>
+                    {else}未验证{/if}
+                </td>
+                <td>{if $r.report_url}<a href="{$r.report_url}" target="_blank">举报</a>{else}-{/if}</td>
+            </tr>
+            {/volist}
+            {empty name="records"}
+            <tr><td colspan="13" style="text-align:center;color:#999;">暂无已验证备案</td></tr>
+            {/empty}
+        </tbody>
+    </table>
+    <footer>
+        Copyright Float Studio / Flos Float Community 2018~2026. All rights Reserved.
+    </footer>
+</body>
+</html>

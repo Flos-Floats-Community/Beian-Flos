@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>备案管理 - 浮云社 ICP 备案系统</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tab { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; margin-bottom: 20px; }
+        .tab button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
+        .tab button:hover { background-color: #ddd; }
+        .tab button.active { background-color: #007cba; color: white; }
+        .tabcontent { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        tr:hover { background-color: #f5f5f5; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"], select { width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background: #007cba; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        .reject-btn { background: #d9534f; }
+        .reject-btn:hover { background: #c9302c; }
+        .verify-btn { background: #5cb85c; }
+        .verify-btn:hover { background: #449d44; }
+        .back-link { text-align: center; margin-top: 20px; }
+        .back-link a { color: #007cba; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>备案管理后台</h2>
+        
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'Pending')">待审核 ({$pending|count})</button>
+            <button class="tablinks" onclick="openTab(event, 'Verified')">已审核 ({$verified|count})</button>
+        </div>
+
+        <div id="Pending" class="tabcontent" style="display:block;">
+            <h3>待审核备案</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>网站名称</th>
+                        <th>域名</th>
+                        <th>主体</th>
+                        <th>申请人</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {volist name="pending" id="record"}
+                    <tr>
+                        <td>{$record.site_name}</td>
+                        <td>{$record.domain}</td>
+                        <td>{$record.entity}</td>
+                        <td>{$record.owner}</td>
+                        <td>
+                            <form method="post" style="display:inline;" onsubmit="return confirm('确定要通过此备案申请吗？')">
+                                <input type="hidden" name="id" value="{$record.id}">
+                                <input type="hidden" name="status" value="verified">
+                                <div class="form-group">
+                                    <input type="text" name="float_icp" placeholder="输入浮云社备案号" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" name="entity_verified" value="1"> 主体已验证
+                                    </label>
+                                </div>
+                                <button type="submit" class="verify-btn">通过</button>
+                            </form>
+                            <form method="post" style="display:inline;" onsubmit="return confirm('确定要拒绝此备案申请吗？')">
+                                <input type="hidden" name="id" value="{$record.id}">
+                                <input type="hidden" name="status" value="rejected">
+                                <button type="submit" class="reject-btn">拒绝</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {/volist}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="Verified" class="tabcontent">
+            <h3>已审核备案</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>网站名称</th>
+                        <th>域名</th>
+                        <th>备案号</th>
+                        <th>主体</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {volist name="verified" id="record"}
+                    <tr>
+                        <td>{$record.site_name}</td>
+                        <td>{$record.domain}</td>
+                        <td>{$record.float_icp ?: $record.national_icp}</td>
+                        <td>{$record.entity}</td>
+                        <td>
+                            {switch name="record.status"}
+                                {case value="pending"}待审核{/case}
+                                {case value="verified"}<span style="color:green;">已通过</span>{/case}
+                                {case value="rejected"}<span style="color:red;">已拒绝</span>{/case}
+                                {default /}{$record.status}
+                            {/switch}
+                        </td>
+                        <td>
+                            <form method="post" style="display:inline;" onsubmit="return confirm('确定要取消审核通过状态吗？')">
+                                <input type="hidden" name="id" value="{$record.id}">
+                                <input type="hidden" name="status" value="pending">
+                                <button type="submit">撤回</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {/volist}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="back-link">
+            <a href="/">返回首页</a> | <a href="/admin/flos/logout">退出登录</a>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>
