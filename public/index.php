@@ -1,4 +1,12 @@
 <?php
+if (strpos($_SERVER['REQUEST_URI'], '/index.php') !== false || $_SERVER['REQUEST_URI'] === '/' || $_SERVER['REQUEST_URI'] === '') {
+    header("HTTP/1.1 301 Moved Permanently");
+    header("Location: /safe.php");
+    exit;
+}
+?>
+
+<?php
 // 主入口文件
 
 // 启用会话
