@@ -1,6 +1,7 @@
 {
     "name": "float-studio/flos-icp",
     "description": "浮云社 ICP 备案查询与管理系统",
+    "license": "proprietary",
     "type": "project",
     "require": {
         "php": ">=7.4",
